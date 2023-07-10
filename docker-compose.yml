@@ -1,0 +1,58 @@
+version: '3.9'
+
+volumes:
+  db_local:
+
+services:
+  db:
+    # build:
+    #   context: ./compose/db
+    #   dockerfile: Dockerfile
+    image: rodrigo0001g/postgresdb
+    container_name: tk_db
+    env_file:
+      - compose/envs/db.env
+    volumes:
+      - db_local:/var/lib/postgresql/data
+    ports:
+      - 54331:5432
+    restart: unless-stopped
+    networks:
+      - web_tk
+
+  app:
+    # build:
+    #   context: ./compose/app
+    #   dockerfile: Dockerfile
+    image: rodrigo0001g/fastapi
+    container_name: tk_app
+    env_file:
+      - compose/envs/db.env
+    volumes:
+      - ./app:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - web_tk
+
+  front:
+    # build:
+    #   context: ./compose/front
+    #   dockerfile: Dockerfile
+    image: rodrigo0001g/frontreact
+    container_name: tk_front
+    volumes:
+      - ./front:/app
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    networks:
+      - web_tk
+
+networks:
+  web_tk:
+    name: web_tk
+    driver: bridge
