@@ -117,7 +117,7 @@ CREATE TABLE tickets (
   categoria_id uuid not null,
   titulo varchar(150) not null,
   descripcion text not null,
-	estado bool NOT NULL DEFAULT 1,
+	estado int NOT NULL DEFAULT 1,
   CONSTRAINT fk_ticket_user
     FOREIGN KEY(user_id) 
 	  REFERENCES users(id)
@@ -138,3 +138,30 @@ COMMENT ON COLUMN tickets.titulo IS 'Titulo de referencia del ticker';
 COMMENT ON COLUMN tickets.descripcion IS 'Descripcion del problema que derivo en la generacion de ticket';
 COMMENT ON COLUMN tickets.estado IS 'Estado del registro 1: pendiente, 0: rechazado, 2: Terminado';
 
+
+
+CREATE TABLE respuestas (
+	id uuid NOT NULL PRIMARY KEY,
+  user_id uuid not null,
+  ticket_id uuid not null,
+  observacion text not null,
+  estado_resultante int not null,
+  
+  CONSTRAINT fk_respuesta_user
+    FOREIGN KEY(user_id) 
+	  REFERENCES users(id)
+	  ON DELETE CASCADE,
+  CONSTRAINT fk_respuesta_ticket
+    FOREIGN KEY(ticket_id) 
+	  REFERENCES tickets(id)
+	  ON DELETE CASCADE
+);
+COMMENT ON TABLE respuestas IS 'Tabla que almacena los tickets registrados por los usuarios';
+
+-- Column comments
+
+COMMENT ON COLUMN respuestas.id IS 'Identificador de la tabla respuesta';
+COMMENT ON COLUMN respuestas.user_id IS 'Usuario que registro la respuesta';
+COMMENT ON COLUMN respuestas.ticket_id IS 'Ticket al que pertenece la respuesta';
+COMMENT ON COLUMN respuestas.observacion IS 'Observacion de la respuesta';
+COMMENT ON COLUMN respuestas.estado_resultante IS 'Estado de cambio del ticker';
